@@ -28,14 +28,14 @@
     </div>
 
     <!-- component-slot-name -->
-    <div class="omponent-slot-name">
+    <div class="component-slot-name">
       <h2>具名插槽</h2>
-      <p>這裡要帶入一個有四個slot位置的component，由template決定位置，在哪邊帶入不受影響</p>
+      <p>這裡要帶入一個有四個slot位置的component，由 slot template 決定位置，在哪邊帶入不受影響</p>
       <component-slot-name>
-        <template v-slot:footer>我要指定name是footer的slot內容</template>
-        <template v-slot:header>我要指定name是header的slot內容</template>
-        <template>我要指定沒有name(default)的slot內容</template>
-        <template v-slot:content>我要指定name是content的slot內容</template>
+        <template v-slot:footer>我要指定 name 是 footer 的 slot 內容</template>
+        <template v-slot:header>我要指定 name 是 header 的 slot 內容</template>
+        <template>我要指定沒有 name(default) 的 slot 內容</template>
+        <template v-slot:content>我要指定 name 是 content 的 slot 內容</template>
       </component-slot-name>
       <hr />
     </div>
@@ -45,15 +45,47 @@
       <h2>作用域插槽 ( Scoped Slots )</h2>
       <!-- :default 也可以省略 -->
       <component-scoped
-        v-slot:default="slotProps"
-      >我是父層，想要看到component裡面的firstName：{{ slotProps.user.lastName }}</component-scoped>
-      <p>如果只有一個:default的props，可以直接放在 component tag上，多個具名就不行，要用template分開來</p>
+        v-slot="slotProps"
+      >我是父層，想要看到 component 裡面的 firstName：{{ slotProps.user.firstName }}</component-scoped>
       <hr />
     </div>
 
     <!-- 一般的props -->
-    <h2>一般的props</h2>
-    <component-props :childReceive="parentValue"></component-props>
+    <div class="component-props">
+      <h2>一般的props</h2>
+      <component-props :childReceive="parentValue"></component-props>
+      <hr />
+    </div>
+
+    <!-- 解構插槽Prop (Destructuring Slot Props) -->
+    <div class="Destructuring">
+      <h2>解構插槽Prop (Destructuring Slot Props)</h2>
+      <component-scoped v-slot="{ user }">解構：{{ user.firstName }}</component-scoped>
+      <component-scoped v-slot="{ user:info }">解構：{{ info.firstName }}</component-scoped>
+      <hr />
+    </div>
+
+    <!-- 具名插槽的縮寫(Named Slots Shorthand) -->
+    <div class="component-slot-name">
+      <h2>具名插槽的縮寫</h2>
+      <component-slot-name>
+        <template #footer>name 是 footer 的 slot 內容</template>
+        <template #header>name 是 header 的 slot 內容</template>
+        <template>沒有 name(default) 的 slot 內容</template>
+        <template #content>name 是 content 的 slot 內容</template>
+      </component-slot-name>
+      <component-scoped #default="{ user }">解構：{{ user.firstName }}</component-scoped>
+      <hr />
+    </div>
+
+    <!-- 列表範例 -->
+    <div class="component-list">
+      <component-list :lists="lists">
+        <template #item="props">
+          <li>{{ props.text }}</li>
+        </template>
+      </component-list>
+    </div>
   </div>
 </template>
 
@@ -93,13 +125,12 @@ Vue.component("component-slot-name", {
 
 Vue.component("component-scoped", {
   template: `<div>
-              <p>slot 內容是父層的 template 要的：<slot :user='user'></slot></p>
+              <p><slot :user='slotuser'></slot></p>
             </div>`,
   data() {
     return {
-      user: {
-        firstName: "emma",
-        lastName: "lin"
+      slotuser: {
+        firstName: "emma"
       }
     };
   }
@@ -112,13 +143,27 @@ Vue.component("component-props", {
   props: ["childReceive"]
 });
 
+Vue.component("component-list", {
+  props: ["lists"],
+  template: `
+        <ul>
+            <slot name="item" v-for="item in lists" :text="item.name"></slot>
+        </ul>
+    `
+});
+
 export default {
   name: "HelloWorld",
   data() {
     return {
       mes: "hehe",
       age: 18,
-      parentValue: "dataInParent"
+      parentValue: "dataInParent",
+      lists: [
+        { id: 1, name: "emma" },
+        { id: 2, name: "hehe" },
+        { id: 3, name: "haha" }
+      ]
     };
   },
   created() {
