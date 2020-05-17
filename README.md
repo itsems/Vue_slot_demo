@@ -1,4 +1,9 @@
-# vue_slot
+# Vue Slots Demo
+
+## Medium Doc
+
+[[Vue] Slot 是什麼? 怎麼用?](https://medium.com/itsems-frontend/vue-slot-21e1ec9968f8)
+
 
 ## Project setup
 ```
